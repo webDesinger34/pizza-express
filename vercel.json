@@ -1,11 +1,14 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/*.js", "use": "@vercel/node" },
-    { "src": "public/**", "use": "@vercel/static" }
-  ],
+  "functions": {
+    "api/orders.js": {
+      "runtime": "@vercel/node@3"
+    }
+  },
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/api/orders", "dest": "/api/orders.js" },
+    { "src": "/admin", "dest": "/public/admin.html" },
+    { "src": "/kueche", "dest": "/public/kueche.html" },
+    { "src": "/(.*)", "dest": "/public/index.html" }
   ]
 }
