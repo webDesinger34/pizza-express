@@ -1,14 +1,8 @@
 {
-  "version": 2,
-  "functions": {
-    "api/orders.js": {
-      "runtime": "@vercel/node@3"
-    }
-  },
-  "routes": [
-    { "src": "/api/orders", "dest": "/api/orders.js" },
-    { "src": "/admin", "dest": "/admin.html" },
-    { "src": "/kueche", "dest": "/kueche.html" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/orders", "destination": "/api/orders.js" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/kueche", "destination": "/kueche.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
