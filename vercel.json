@@ -7,6 +7,8 @@
   },
   "routes": [
     { "src": "/api/orders", "dest": "/api/orders.js" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/kueche", "dest": "/kueche.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
