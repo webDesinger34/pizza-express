@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizza Express Thalgau – Steinofen-Pizza, Lieferung & Abholung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0392b;--red-dark:#96211b;--red-light:#fdf2f1;
+  --gold:#d4a017;--cream:#fffbf5;--dark:#1a0a00;
+  --text:#2c1a00;--muted:#8a7060;--border:#e8ddd0;
+  --white:#ffffff;--success:#2ecc71;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+/* NAV */
+nav{background:var(--dark);position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.06)}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px}
+.logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none}
+.logo-icon{width:34px;height:34px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;letter-spacing:.3px}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.4);font-weight:300;letter-spacing:1.5px;text-transform:uppercase;margin-top:-3px}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:rgba(255,255,255,.6);text-decoration:none;font-size:13px;padding:6px 12px;border-radius:6px;transition:.2s;font-weight:400}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.hours-badge{font-size:11px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:5px}
+.hours-dot{width:6px;height:6px;border-radius:50%;background:#2ecc71;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.cart-trigger{background:var(--red);border:none;color:#fff;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:7px;font-family:'DM Sans',sans-serif;transition:.2s}
+.cart-trigger:hover{background:var(--red-dark)}
+.cart-count{background:rgba(255,255,255,.25);border-radius:10px;padding:1px 7px;font-size:11px;font-weight:500}
+
+/* HERO */
+.hero{background:var(--dark);position:relative;overflow:hidden;padding:70px 24px 60px}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 60% 50%,rgba(192,57,43,.18) 0%,transparent 70%);pointer-events:none}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.hero-label{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:16px}
+.hero h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:16px}
+.hero h1 em{color:var(--gold);font-style:italic}
+.hero-desc{font-size:15px;color:rgba(255,255,255,.55);line-height:1.75;margin-bottom:28px;font-weight:300}
+.hero-ctas{display:flex;gap:10px;flex-wrap:wrap}
+.btn-primary{background:var(--red);color:#fff;border:none;padding:13px 24px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.btn-primary:hover{background:var(--red-dark);transform:translateY(-1px)}
+.btn-outline{background:transparent;color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.2);padding:13px 24px;border-radius:8px;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.btn-outline:hover{border-color:rgba(255,255,255,.5);color:#fff}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.08);border-radius:12px;overflow:hidden;margin-top:40px}
+.hero-stat{background:rgba(255,255,255,.04);padding:16px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700}
+.stat-label{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+.hero-visual{display:flex;flex-direction:column;gap:12px}
+.pizza-showcase{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;text-align:center}
+.pizza-emoji{font-size:80px;line-height:1;margin-bottom:12px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.pizza-showcase p{font-size:13px;color:rgba(255,255,255,.5);font-style:italic}
+.info-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.6);font-size:12px;padding:7px 14px;border-radius:20px;display:flex;align-items:center;gap:6px}
+.pill-icon{font-size:14px}
+
+/* MAIN LAYOUT */
+.main-container{max-width:1100px;margin:0 auto;padding:48px 24px;display:grid;grid-template-columns:1fr 360px;gap:32px;align-items:start}
+
+/* MENU SECTION */
+.menu-section{}
+.section-header{margin-bottom:28px}
+.section-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--red);font-weight:500;margin-bottom:8px}
+.section-title{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;margin-bottom:6px}
+.section-sub{font-size:14px;color:var(--muted)}
+.category-nav{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.cat-btn{background:none;border:1.5px solid var(--border);color:var(--muted);font-size:13px;padding:7px 16px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;display:flex;align-items:center;gap:6px;font-weight:400}
+.cat-btn:hover{border-color:var(--red);color:var(--red)}
+.cat-btn.active{background:var(--red);border-color:var(--red);color:#fff;font-weight:500}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.menu-item{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:.2s;position:relative;overflow:hidden}
+.menu-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--red);transform:scaleX(0);transition:.2s;transform-origin:left}
+.menu-item:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,57,43,.1)}
+.menu-item:hover::before{transform:scaleX(1)}
+.item-emoji{font-size:32px;margin-bottom:10px;display:block;line-height:1}
+.item-name{font-size:14px;font-weight:500;margin-bottom:4px;line-height:1.3}
+.item-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.item-footer{display:flex;align-items:center;justify-content:space-between}
+.item-price{font-size:16px;font-weight:500;color:var(--red)}
+.add-to-cart{background:var(--red);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:.2s;flex-shrink:0}
+.add-to-cart:hover{background:var(--red-dark);transform:scale(1.1)}
+.add-to-cart.in-cart{background:var(--success)}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:76px}
+
+/* CART */
+.cart-box{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.cart-header{background:var(--dark);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.cart-header h3{color:#fff;font-size:15px;font-weight:500}
+.cart-header span{font-size:12px;color:rgba(255,255,255,.4)}
+.cart-body{padding:0}
+.cart-empty{padding:32px 20px;text-align:center;color:var(--muted)}
+.cart-empty-icon{font-size:40px;margin-bottom:10px;opacity:.3}
+.cart-empty p{font-size:13px}
+.cart-items{padding:8px 0}
+.cart-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.cart-row:last-child{border-bottom:none}
+.cr-name{flex:1;font-size:13px;font-weight:400;line-height:1.3}
+.cr-qty{display:flex;align-items:center;gap:6px}
+.qty-btn{background:none;border:1px solid var(--border);width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:.15s;color:var(--text)}
+.qty-btn:hover{border-color:var(--red);color:var(--red)}
+.cr-price{font-size:13px;font-weight:500;min-width:52px;text-align:right;color:var(--red)}
+.cart-footer{padding:16px;border-top:1px solid var(--border)}
+.cart-line{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:6px}
+.cart-total-line{display:flex;justify-content:space-between;font-size:15px;font-weight:500;padding-top:8px;border-top:1px solid var(--border);margin-top:8px}
+.order-btn{width:100%;background:var(--red);border:none;color:#fff;padding:13px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;margin-top:12px;font-family:'DM Sans',sans-serif;transition:.2s}
+.order-btn:hover{background:var(--red-dark)}
+.order-btn:disabled{background:#ccc;cursor:not-allowed}
+
+/* HOURS CARD */
+.hours-card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-top:16px}
+.hours-card h4{font-size:14px;font-weight:500;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.hours-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.hours-row:last-child{border:none}
+.hours-day{color:var(--muted)}
+.hours-time{font-weight:400;font-size:12px;text-align:right}
+
+/* CALL CARD */
+.call-card{background:var(--dark);border-radius:16px;padding:20px;margin-top:16px;text-align:center}
+.call-card p{color:rgba(255,255,255,.5);font-size:12px;margin-bottom:12px}
+.call-card a{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--gold);color:var(--dark);text-decoration:none;padding:11px;border-radius:8px;font-weight:500;font-size:14px;transition:.2s}
+.call-card a:hover{opacity:.9}
+
+/* CHECKOUT PANEL */
+.checkout-panel{display:none;background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.checkout-panel.open{display:block}
+.checkout-header{background:var(--red);padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.checkout-header h3{color:#fff;font-size:15px;font-weight:500}
+.back-btn{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif}
+.back-btn:hover{color:#fff}
+.checkout-body{padding:20px}
+.order-type-toggle{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:18px}
+.ot-btn{padding:10px;border:1.5px solid var(--border);background:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s;text-align:center}
+.ot-btn.active{background:var(--dark);border-color:var(--dark);color:#fff;font-weight:500}
+.form-group{margin-bottom:12px}
+.form-group label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.form-group input,.form-group textarea,.form-group select{width:100%;padding:9px 12px;font-size:14px;border:1.5px solid var(--border);border-radius:8px;background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;transition:.2s;outline:none}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--red)}
+.form-group textarea{height:70px;resize:none}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.submit-btn{width:100%;background:var(--red);border:none;color:#fff;padding:13px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:16px;transition:.2s}
+.submit-btn:hover{background:var(--red-dark)}
+.submit-btn:disabled{background:#ccc;cursor:not-allowed}
+.order-summary-mini{background:var(--cream);border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px}
+.order-summary-mini h4{font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px}
+.osm-row{display:flex;justify-content:space-between;padding:3px 0;color:var(--muted)}
+.osm-total{display:flex;justify-content:space-between;font-weight:500;padding-top:6px;border-top:1px solid var(--border);margin-top:6px}
+
+/* SUCCESS */
+.success-panel{display:none;background:var(--white);border:1px solid var(--border);border-radius:16px;padding:32px 24px;text-align:center}
+.success-panel.open{display:block}
+.success-icon{font-size:52px;margin-bottom:16px;display:block}
+.success-panel h3{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px}
+.success-panel p{font-size:13px;color:var(--muted);line-height:1.7}
+.order-id{background:var(--cream);border-radius:6px;padding:6px 12px;font-size:12px;font-family:monospace;margin:12px 0;display:inline-block;color:var(--red)}
+.new-order-btn{margin-top:16px;background:var(--dark);color:#fff;border:none;padding:11px 24px;border-radius:8px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px}
+
+/* INFO SECTION */
+.info-section{max-width:1100px;margin:0 auto;padding:0 24px 60px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.info-card-big{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px}
+.info-card-big .icon{font-size:28px;margin-bottom:12px;display:block}
+.info-card-big h3{font-size:16px;font-weight:500;margin-bottom:8px}
+.info-card-big p,.info-card-big li{font-size:13px;color:var(--muted);line-height:1.8}
+.info-card-big ul{padding-left:0;list-style:none}
+
+/* FOOTER */
+footer{background:var(--dark);padding:32px 24px;text-align:center;border-top:1px solid rgba(255,255,255,.06)}
+footer p{font-size:12px;color:rgba(255,255,255,.3)}
+footer strong{color:rgba(255,255,255,.6)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;opacity:0;transition:.3s;z-index:500;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* LOADING */
+.btn-loading{opacity:.7;pointer-events:none}
+
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-visual{display:none}
+  .hero h1{font-size:36px}
+  .main-container{grid-template-columns:1fr}
+  .sidebar{position:static}
+  .info-section{grid-template-columns:1fr}
+  .menu-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="logo">
+      <div class="logo-icon">🍕</div>
+      <div>
+        <div class="logo-text">Pizza Express</div>
+        <div class="logo-sub">Thalgau</div>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#menu">Speisekarte</a>
+      <a href="#info">Info</a>
+      <a href="tel:+4362357099">📞 Anrufen</a>
+    </div>
+    <div class="nav-right">
+      <div class="hours-badge">
+        <span class="hours-dot"></span>
+        <span id="open-status">Überprüfe...</span>
+      </div>
+      <button class="cart-trigger" onclick="openCart()">
+        🛒 Warenkorb <span class="cart-count" id="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-label">Steinofen · Seit Jahren in Thalgau</div>
+      <h1>Echte Pizza.<br><em>Knusprig.</em><br>Frisch.</h1>
+      <p class="hero-desc">Handgemachte Pizzen aus dem Steinofen, fangfrische Zutaten, und direkter Lieferservice in Thalgau und Umgebung.</p>
+      <div class="hero-ctas">
+        <a href="#menu" class="btn-primary">🍕 Jetzt bestellen</a>
+        <a href="tel:+4362357099" class="btn-outline">📞 +43 6235 7099</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="stat-num">25–40'</div><div class="stat-label">Lieferzeit</div></div>
+        <div class="hero-stat"><div class="stat-num">1 €</div><div class="stat-label">Lieferpauschale</div></div>
+        <div class="hero-stat"><div class="stat-num">3.9★</div><div class="stat-label">Bewertung</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="pizza-showcase">
+        <span class="pizza-emoji">🍕</span>
+        <p>Steinofen-Qualität seit Jahren</p>
+      </div>
+      <div class="info-pills">
+        <div class="pill"><span class="pill-icon">🏠</span>Lieferung</div>
+        <div class="pill"><span class="pill-icon">🏪</span>Abholung</div>
+        <div class="pill"><span class="pill-icon">🔥</span>Steinofen</div>
+        <div class="pill"><span class="pill-icon">📍</span>Salzburger Str. 29</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main-container" id="menu">
+  <div class="menu-section">
+    <div class="section-header">
+      <div class="section-label">Speisekarte</div>
+      <h2 class="section-title">Was darf es sein?</h2>
+      <p class="section-sub">Alle Gerichte frisch zubereitet – einfach auswählen und in den Warenkorb legen</p>
+    </div>
+    <div class="category-nav" id="cat-nav"></div>
+    <div class="menu-grid" id="menu-grid"></div>
+  </div>
+
+  <div class="sidebar">
+    <div class="cart-box" id="cart-box">
+      <div class="cart-header">
+        <h3>🛒 Warenkorb</h3>
+        <span id="cart-item-count">leer</span>
+      </div>
+      <div id="cart-body">
+        <div class="cart-empty">
+          <div class="cart-empty-icon">🛒</div>
+          <p>Noch nichts ausgewählt.<br>Klicke auf + um Gerichte hinzuzufügen!</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="checkout-panel" id="checkout-panel">
+      <div class="checkout-header">
+        <h3>Bestellung abschließen</h3>
+        <button class="back-btn" onclick="closeCheckout()">← Zurück</button>
+      </div>
+      <div class="checkout-body">
+        <div class="order-summary-mini" id="order-summary-mini"></div>
+        <div class="order-type-toggle">
+          <button class="ot-btn active" id="btn-lieferung" onclick="setOrderType('lieferung')">🚚 Lieferung</button>
+          <button class="ot-btn" id="btn-abholung" onclick="setOrderType('abholung')">🏪 Abholung</button>
+        </div>
+        <div class="form-row-2">
+          <div class="form-group"><label>Vorname *</label><input type="text" id="f-vorname" placeholder="Max"></div>
+          <div class="form-group"><label>Nachname *</label><input type="text" id="f-nachname" placeholder="Mustermann"></div>
+        </div>
+        <div class="form-group"><label>E-Mail * (Bestätigung)</label><input type="email" id="f-email" placeholder="max@beispiel.at"></div>
+        <div class="form-group"><label>Telefon *</label><input type="tel" id="f-tel" placeholder="+43 ..."></div>
+        <div id="lieferung-fields">
+          <div class="form-group"><label>Straße & Hausnummer *</label><input type="text" id="f-strasse" placeholder="Musterstraße 1"></div>
+          <div class="form-row-2">
+            <div class="form-group"><label>PLZ *</label><input type="text" id="f-plz" placeholder="5303"></div>
+            <div class="form-group"><label>Ort *</label><input type="text" id="f-ort" placeholder="Thalgau"></div>
+          </div>
+        </div>
+        <div class="form-group"><label>Zahlungsart</label>
+          <select id="f-zahlung">
+            <option value="bar">Bar bei Lieferung / Abholung</option>
+            <option value="karte">Karte bei Lieferung</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Anmerkungen</label><textarea id="f-note" placeholder="z.B. kein Koriander, 2. Stock links..."></textarea></div>
+        <button class="submit-btn" id="submit-btn" onclick="submitOrder()">✅ Bestellung absenden</button>
+      </div>
+    </div>
+
+    <div class="success-panel" id="success-panel">
+      <span class="success-icon">✅</span>
+      <h3>Bestellung eingegangen!</h3>
+      <div class="order-id" id="order-id"></div>
+      <p id="success-text">Danke! Wir haben deine Bestellung erhalten und senden dir eine Bestätigung per E-Mail.</p>
+      <p style="margin-top:12px;font-size:12px">Fragen? <strong>+43 6235 7099</strong></p>
+      <button class="new-order-btn" onclick="resetOrder()">Neue Bestellung</button>
+    </div>
+
+    <div class="hours-card">
+      <h4>🕐 Öffnungszeiten</h4>
+      <div class="hours-row"><span class="hours-day">Mo – Sa</span><span class="hours-time">11:00–14:00 &amp; 16:00–22:00</span></div>
+      <div class="hours-row"><span class="hours-day">So &amp; Feiertag</span><span class="hours-time">17:00–22:00 Uhr</span></div>
+    </div>
+
+    <div class="call-card">
+      <p>Lieber direkt bestellen?</p>
+      <a href="tel:+4362357099">📞 +43 6235 7099</a>
+    </div>
+  </div>
+</div>
+
+<div class="info-section" id="info">
+  <div class="info-card-big">
+    <span class="icon">🍕</span>
+    <h3>Steinofen-Qualität</h3>
+    <p>Unsere Pizzen werden im echten Steinofen gebacken – knuspriger Boden, perfekt geschmolzener Käse, frische Zutaten. Das schmeckt man!</p>
+  </div>
+  <div class="info-card-big">
+    <span class="icon">🚚</span>
+    <h3>Lieferservice</h3>
+    <ul>
+      <li>📍 Salzburger Straße 29, 5303 Thalgau</li>
+      <li>⏱ 25–40 Minuten Lieferzeit</li>
+      <li>💶 Lieferpauschale: 1 €</li>
+      <li>🏪 Abholung ebenfalls möglich</li>
+    </ul>
+  </div>
+  <div class="info-card-big">
+    <span class="icon">📞</span>
+    <h3>Kontakt</h3>
+    <ul>
+      <li>📱 <a href="tel:+4362357099" style="color:var(--red)">+43 6235 7099</a></li>
+      <li>📍 Salzburger Str. 29, Thalgau</li>
+      <li>🕐 Mo–Sa: 11–14 &amp; 16–22 Uhr</li>
+      <li>🕐 So/FT: 17–22 Uhr</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  <p><strong>Pizza Express Thalgau</strong> · Salzburger Straße 29 · 5303 Thalgau · <a href="tel:+4362357099" style="color:rgba(255,255,255,.5)">+43 6235 7099</a></p>
+  <p style="margin-top:6px">© 2025 Pizza Express Thalgau</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MENU = {
+  pizza:[
+    {id:1,name:'Margherita',desc:'Tomatensauce, Mozzarella, Basilikum',price:8.90,emoji:'🍕'},
+    {id:2,name:'Salami',desc:'Tomatensauce, Mozzarella, Salami',price:9.50,emoji:'🍕'},
+    {id:3,name:'Hawaii',desc:'Schinken, Ananas, Mozzarella',price:9.90,emoji:'🍍'},
+    {id:4,name:'Quattro Formaggi',desc:'Vier Käsesorten, Mozzarella',price:10.50,emoji:'🧀'},
+    {id:5,name:'Tonno',desc:'Thunfisch, Zwiebeln, Kapern',price:10.20,emoji:'🐟'},
+    {id:6,name:'Diavola',desc:'Scharfe Salami, Chili, Mozzarella',price:10.50,emoji:'🌶️'},
+    {id:7,name:'Prosciutto e Rucola',desc:'Rohschinken, Rucola, Parmesan',price:11.50,emoji:'🥩'},
+    {id:8,name:'Riesenpizza Salami',desc:'XXL Salami – für den großen Hunger',price:13.90,emoji:'🍕'},
+  ],
+  pasta:[
+    {id:9,name:'Spaghetti Bolognese',desc:'Hausgemachte Fleischsauce, Parmesan',price:9.90,emoji:'🍝'},
+    {id:10,name:'Spaghetti Carbonara',desc:'Ei, Speck, Parmesan, Sahne',price:10.50,emoji:'🍝'},
+    {id:11,name:'Spaghetti Arrabiata',desc:'Scharfe Tomatensauce, Knoblauch',price:9.20,emoji:'🍝'},
+    {id:12,name:'Spaghetti Napoli',desc:'Tomatensauce, frisches Basilikum',price:8.90,emoji:'🍝'},
+  ],
+  salat:[
+    {id:13,name:'Gemischter Salat',desc:'Frischer Salat der Saison, mit Brot',price:7.90,emoji:'🥗'},
+    {id:14,name:'Griechischer Bauernsalat',desc:'Feta, Oliven, Tomate, Gurke',price:9.90,emoji:'🫒'},
+    {id:15,name:'Thunfischsalat',desc:'Mit Thunfisch & Ei',price:9.90,emoji:'🐟'},
+    {id:16,name:'Schrimpssalat',desc:'Mit frischen Garnelen',price:9.90,emoji:'🦐'},
+    {id:17,name:'Haussalatplatte',desc:'Schinken, Salami, Ei – mit Brot',price:10.50,emoji:'🥗'},
+  ],
+  dessert:[
+    {id:18,name:'Tiramisu',desc:'Hausgemacht, mit Mascarpone',price:4.90,emoji:'🍮'},
+    {id:19,name:'Eis (2 Kugeln)',desc:'Wahl aus verschiedenen Sorten',price:3.50,emoji:'🍨'},
+  ],
+  drinks:[
+    {id:20,name:'Coca-Cola 0,5l',desc:'Klassisch oder Zero',price:2.80,emoji:'🥤'},
+    {id:21,name:'Wasser 0,5l',desc:'Still oder prickelnd',price:2.20,emoji:'💧'},
+    {id:22,name:'Bier 0,5l',desc:'Lokal vom Fass',price:3.50,emoji:'🍺'},
+    {id:23,name:'Apfelsaft 0,33l',desc:'Naturtrüb, aus der Region',price:2.50,emoji:'🧃'},
+  ]
+};
+
+const CAT_LABELS = {pizza:'🍕 Pizzen',pasta:'🍝 Pasta',salat:'🥗 Salate',dessert:'🍮 Nachspeisen',drinks:'🥤 Getränke'};
+
+let cart = {};
+let currentCat = 'pizza';
+let orderType = 'lieferung';
+
+// Open hours check
+function checkOpen(){
+  const now = new Date();
+  const day = now.getDay(); // 0=Sun
+  const h = now.getHours() + now.getMinutes()/60;
+  let open = false;
+  if(day>=1&&day<=6){ if((h>=11&&h<14)||(h>=16&&h<22)) open=true; }
+  if(day===0){ if(h>=17&&h<22) open=true; }
+  const el = document.getElementById('open-status');
+  if(el){ el.textContent = open ? 'Jetzt geöffnet' : 'Derzeit geschlossen'; el.style.color = open ? '#2ecc71' : 'rgba(255,255,255,.4)'; }
+}
+checkOpen();
+
+// Render category nav
+function renderCatNav(){
+  const nav = document.getElementById('cat-nav');
+  nav.innerHTML = Object.entries(CAT_LABELS).map(([k,v])=>
+    `<button class="cat-btn${k===currentCat?' active':''}" onclick="switchCat('${k}')">${v}</button>`
+  ).join('');
+}
+
+function switchCat(cat){
+  currentCat = cat;
+  renderCatNav();
+  renderMenu();
+}
+
+function renderMenu(){
+  const grid = document.getElementById('menu-grid');
+  grid.innerHTML = MENU[currentCat].map(item=>`
+    <div class="menu-item" id="item-${item.id}">
+      <span class="item-emoji">${item.emoji}</span>
+      <div class="item-name">${item.name}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-footer">
+        <div class="item-price">${item.price.toFixed(2).replace('.',',')} €</div>
+        <button class="add-to-cart${(cart[item.id]||0)>0?' in-cart':''}" onclick="addItem(${item.id})" aria-label="${item.name} hinzufügen">
+          ${(cart[item.id]||0)>0 ? '✓' : '+'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+function findItem(id){ for(const c of Object.values(MENU)){ const f=c.find(i=>i.id==id); if(f) return f; } return null; }
+
+function addItem(id){
+  cart[id]=(cart[id]||0)+1;
+  updateCartUI();
+  renderMenu();
+  showToast('Zum Warenkorb hinzugefügt 🍕');
+}
+
+function changeQty(id,delta){
+  cart[id]=(cart[id]||0)+delta;
+  if(cart[id]<0) cart[id]=0;
+  updateCartUI();
+  renderMenu();
+}
+
+function updateCartUI(){
+  const keys = Object.keys(cart).filter(k=>cart[k]>0);
+  const total_items = keys.reduce((s,k)=>s+cart[k],0);
+  document.getElementById('cart-count').textContent = total_items;
+  document.getElementById('cart-item-count').textContent = total_items>0 ? total_items+' Artikel' : 'leer';
+
+  const body = document.getElementById('cart-body');
+  if(!keys.length){
+    body.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><p>Noch nichts ausgewählt.<br>Klicke auf + um Gerichte hinzuzufügen!</p></div>';
+    return;
+  }
+
+  let subtotal=0;
+  let rows = keys.map(id=>{
+    const item=findItem(parseInt(id));
+    if(!item) return '';
+    const sub=item.price*cart[id];
+    subtotal+=sub;
+    return`<div class="cart-row">
+      <span class="cr-name">${item.name}</span>
+      <span class="cr-qty">
+        <button class="qty-btn" onclick="changeQty(${id},-1)">−</button>
+        <span>${cart[id]}</span>
+        <button class="qty-btn" onclick="changeQty(${id},1)">+</button>
+      </span>
+      <span class="cr-price">${sub.toFixed(2).replace('.',',')} €</span>
+    </div>`;
+  }).join('');
+
+  const lieferung = orderType==='lieferung' ? 1 : 0;
+  const total = subtotal + lieferung;
+
+  body.innerHTML=`
+    <div class="cart-items">${rows}</div>
+    <div class="cart-footer">
+      <div class="cart-line"><span>Zwischensumme</span><span>${subtotal.toFixed(2).replace('.',',')} €</span></div>
+      ${orderType==='lieferung'?`<div class="cart-line"><span>Lieferpauschale</span><span>1,00 €</span></div>`:''}
+      <div class="cart-total-line"><span>Gesamt</span><span>${total.toFixed(2).replace('.',',')} €</span></div>
+      <button class="order-btn" onclick="openCheckout()">Zur Bestellung →</button>
+    </div>`;
+}
+
+function openCart(){
+  document.getElementById('cart-box').scrollIntoView({behavior:'smooth'});
+}
+
+function openCheckout(){
+  const keys = Object.keys(cart).filter(k=>cart[k]>0);
+  if(!keys.length){ showToast('Bitte zuerst etwas auswählen!'); return; }
+  document.getElementById('cart-box').style.display='none';
+  document.getElementById('checkout-panel').classList.add('open');
+  buildOrderSummary();
+  document.getElementById('checkout-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function closeCheckout(){
+  document.getElementById('checkout-panel').classList.remove('open');
+  document.getElementById('cart-box').style.display='';
+}
+
+function buildOrderSummary(){
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  let subtotal=0;
+  let rows=keys.map(id=>{
+    const item=findItem(parseInt(id));
+    if(!item) return '';
+    const sub=item.price*cart[id];
+    subtotal+=sub;
+    return`<div class="osm-row"><span>${item.name} ×${cart[id]}</span><span>${sub.toFixed(2).replace('.',',')} €</span></div>`;
+  }).join('');
+  const lieferung=orderType==='lieferung'?1:0;
+  document.getElementById('order-summary-mini').innerHTML=
+    `<h4>Deine Bestellung</h4>${rows}
+    ${orderType==='lieferung'?`<div class="osm-row"><span>Lieferpauschale</span><span>1,00 €</span></div>`:''}
+    <div class="osm-total"><span>Gesamt</span><span>${(subtotal+lieferung).toFixed(2).replace('.',',')} €</span></div>`;
+}
+
+function setOrderType(type){
+  orderType=type;
+  document.getElementById('btn-lieferung').classList.toggle('active',type==='lieferung');
+  document.getElementById('btn-abholung').classList.toggle('active',type==='abholung');
+  document.getElementById('lieferung-fields').style.display=type==='lieferung'?'':'none';
+  buildOrderSummary();
+}
+
+async function submitOrder(){
+  const vorname=document.getElementById('f-vorname').value.trim();
+  const nachname=document.getElementById('f-nachname').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const tel=document.getElementById('f-tel').value.trim();
+
+  if(!vorname||!nachname||!email||!tel){ showToast('Bitte alle Pflichtfelder ausfüllen!'); return; }
+  if(orderType==='lieferung'){
+    const strasse=document.getElementById('f-strasse').value.trim();
+    const plz=document.getElementById('f-plz').value.trim();
+    if(!strasse||!plz){ showToast('Bitte Lieferadresse vollständig ausfüllen!'); return; }
+  }
+
+  const btn=document.getElementById('submit-btn');
+  btn.textContent='Wird gesendet...';
+  btn.classList.add('btn-loading');
+
+  const keys=Object.keys(cart).filter(k=>cart[k]>0);
+  let subtotal=0;
+  const items=keys.map(id=>{
+    const item=findItem(parseInt(id));
+    const sub=item.price*cart[id];
+    subtotal+=sub;
+    return{name:item.name,qty:cart[id],price:item.price,subtotal:sub};
+  });
+
+  const payload={
+    customer:{vorname,nachname,email,tel},
+    order_type:orderType,
+    items,
+    subtotal,
+    lieferkosten:orderType==='lieferung'?1:0,
+    total:subtotal+(orderType==='lieferung'?1:0),
+    zahlung:document.getElementById('f-zahlung').value,
+    note:document.getElementById('f-note').value,
+    ...(orderType==='lieferung'?{
+      adresse:{
+        strasse:document.getElementById('f-strasse').value,
+        plz:document.getElementById('f-plz').value,
+        ort:document.getElementById('f-ort').value||'Thalgau'
+      }
+    }:{})
+  };
+
+  try{
+    const res=await fetch('/api/orders',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    const data=await res.json();
+    if(res.ok){
+      document.getElementById('checkout-panel').classList.remove('open');
+      const sp=document.getElementById('success-panel');
+      sp.classList.add('open');
+      document.getElementById('order-id').textContent='Bestellung #'+data.order_id;
+      document.getElementById('success-text').textContent=
+        `Danke, ${vorname}! Wir haben deine ${orderType==='lieferung'?'Lieferbestellung':'Abholbestellung'} erhalten und senden dir eine Bestätigung an ${email}. Wir melden uns bald!`;
+      sp.scrollIntoView({behavior:'smooth'});
+      cart={};
+      updateCartUI();
+    }else{
+      showToast('Fehler beim Senden. Bitte nochmal versuchen oder anrufen!');
+      btn.textContent='✅ Bestellung absenden';
+      btn.classList.remove('btn-loading');
+    }
+  }catch(e){
+    showToast('Verbindungsfehler – bitte anrufen: +43 6235 7099');
+    btn.textContent='✅ Bestellung absenden';
+    btn.classList.remove('btn-loading');
+  }
+}
+
+function resetOrder(){
+  document.getElementById('success-panel').classList.remove('open');
+  document.getElementById('cart-box').style.display='';
+  cart={};
+  updateCartUI();
+  renderMenu();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+renderCatNav();
+renderMenu();
+updateCartUI();
+</script>
+</body>
+</html>

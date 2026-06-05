@@ -1,0 +1,11 @@
+{
+  "name": "pizza-express-thalgau",
+  "version": "1.0.0",
+  "description": "Pizza Express Thalgau – Bestellsystem",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  }
+}

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizza Express – Admin Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#0f0f0f;color:#e8e0d8;min-height:100vh}
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}
+.login-box{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:12px;padding:32px;width:360px;text-align:center}
+.login-box h2{font-size:20px;margin-bottom:6px}
+.login-box p{font-size:13px;color:#666;margin-bottom:20px}
+.login-box input{width:100%;padding:10px 14px;background:#111;border:1px solid #333;color:#e8e0d8;border-radius:8px;font-size:14px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none}
+.login-box input:focus{border-color:#c0392b}
+.login-box button{width:100%;background:#c0392b;border:none;color:#fff;padding:11px;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif}
+header{background:#1a1a1a;border-bottom:1px solid #222;padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+header h1{font-size:16px;font-weight:500}
+.header-right{display:flex;align-items:center;gap:12px}
+.refresh-btn{background:#222;border:1px solid #333;color:#aaa;padding:6px 14px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.refresh-btn:hover{color:#fff;border-color:#444}
+.logout-btn{background:none;border:none;color:#666;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.main{max-width:1200px;margin:0 auto;padding:24px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:#1a1a1a;border:1px solid #222;border-radius:10px;padding:16px}
+.stat-card .num{font-size:24px;font-weight:500;margin-bottom:4px}
+.stat-card .lbl{font-size:12px;color:#666}
+.stat-card.red .num{color:#c0392b}
+.stat-card.gold .num{color:#d4a017}
+.filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{background:#1a1a1a;border:1px solid #2a2a2a;color:#888;font-size:12px;padding:5px 14px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.15s}
+.filter-btn.active{background:#c0392b;border-color:#c0392b;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{background:#1a1a1a;padding:10px 14px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#555;border-bottom:1px solid #222}
+tbody tr{border-bottom:1px solid #1e1e1e;cursor:pointer;transition:.15s}
+tbody tr:hover{background:#1a1a1a}
+tbody td{padding:12px 14px;vertical-align:top}
+.status-badge{display:inline-block;font-size:11px;padding:3px 10px;border-radius:10px;font-weight:500}
+.status-neu{background:#2a1800;color:#f0a500}
+.status-bestaetigt{background:#0a2a1a;color:#2ecc71}
+.status-geliefert{background:#1a1a2a;color:#6699ff}
+.order-id-cell{font-family:monospace;font-size:12px;color:#c0392b}
+.type-badge{font-size:11px;padding:2px 8px;border-radius:4px;background:#222;color:#888}
+.detail-panel{display:none;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:20px;margin-top:16px}
+.detail-panel.open{display:block}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.detail-group h4{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:#555;margin-bottom:8px}
+.detail-group p{font-size:13px;color:#ccc;line-height:1.7}
+.items-table{width:100%;font-size:13px;margin-bottom:12px}
+.items-table td{padding:4px 0;color:#bbb}
+.items-table .total-row td{color:#fff;font-weight:500;border-top:1px solid #333;padding-top:8px}
+.status-select{background:#111;border:1px solid #333;color:#e8e0d8;padding:6px 10px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px}
+.update-btn{background:#c0392b;border:none;color:#fff;padding:7px 16px;border-radius:6px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-left:8px}
+.close-detail{float:right;background:none;border:none;color:#555;cursor:pointer;font-size:18px;line-height:1}
+.close-detail:hover{color:#fff}
+.loading{text-align:center;padding:48px;color:#555}
+.empty{text-align:center;padding:48px;color:#555;font-size:15px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="login-box">
+    <h2>🍕 Admin Login</h2>
+    <p>Pizza Express Thalgau – Bestellungen</p>
+    <input type="password" id="secret-input" placeholder="Admin-Passwort eingeben" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">Anmelden</button>
+    <p id="login-error" style="color:#c0392b;font-size:12px;margin-top:10px;display:none">Falsches Passwort</p>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <header>
+    <h1>🍕 Pizza Express – Bestellungen</h1>
+    <div class="header-right">
+      <button class="refresh-btn" onclick="loadOrders()">↻ Aktualisieren</button>
+      <button class="logout-btn" onclick="logout()">Abmelden</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="stats">
+      <div class="stat-card red"><div class="num" id="stat-today">–</div><div class="lbl">Heute</div></div>
+      <div class="stat-card gold"><div class="num" id="stat-revenue">–</div><div class="lbl">Umsatz heute</div></div>
+      <div class="stat-card"><div class="num" id="stat-total">–</div><div class="lbl">Gesamt Bestellungen</div></div>
+      <div class="stat-card"><div class="num" id="stat-new">–</div><div class="lbl">Neu (unbestätigt)</div></div>
+    </div>
+
+    <div class="filters">
+      <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+      <button class="filter-btn" onclick="setFilter('neu',this)">Neu</button>
+      <button class="filter-btn" onclick="setFilter('bestaetigt',this)">Bestätigt</button>
+      <button class="filter-btn" onclick="setFilter('geliefert',this)">Geliefert</button>
+      <button class="filter-btn" onclick="setFilter('lieferung',this)">Lieferung</button>
+      <button class="filter-btn" onclick="setFilter('abholung',this)">Abholung</button>
+    </div>
+
+    <div id="loading-msg" class="loading">Bestellungen werden geladen...</div>
+    <div id="empty-msg" class="empty hidden">Noch keine Bestellungen vorhanden.</div>
+
+    <table id="orders-table" class="hidden">
+      <thead>
+        <tr>
+          <th>Bestellung</th>
+          <th>Uhrzeit</th>
+          <th>Kunde</th>
+          <th>Typ</th>
+          <th>Artikel</th>
+          <th>Gesamt</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="orders-body"></tbody>
+    </table>
+
+    <div class="detail-panel" id="detail-panel">
+      <button class="close-detail" onclick="closeDetail()">×</button>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let adminSecret = '';
+let allOrders = [];
+let currentFilter = 'all';
+let selectedOrderId = null;
+
+function login(){
+  const val = document.getElementById('secret-input').value;
+  if(!val){ return; }
+  adminSecret = val;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+  loadOrders();
+}
+
+function logout(){
+  adminSecret='';
+  allOrders=[];
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('dashboard').classList.add('hidden');
+}
+
+async function loadOrders(){
+  document.getElementById('loading-msg').classList.remove('hidden');
+  document.getElementById('orders-table').classList.add('hidden');
+  document.getElementById('empty-msg').classList.add('hidden');
+
+  try{
+    const res = await fetch('/api/orders',{
+      headers:{'x-admin-secret':adminSecret}
+    });
+    if(res.status===401){
+      document.getElementById('loading-msg').classList.add('hidden');
+      document.getElementById('login-error').style.display='block';
+      logout();
+      return;
+    }
+    const data = await res.json();
+    allOrders = data.orders || [];
+    updateStats();
+    renderOrders();
+  }catch(e){
+    document.getElementById('loading-msg').textContent='Verbindungsfehler – ist der Server aktiv?';
+  }
+}
+
+function updateStats(){
+  const today = new Date().toDateString();
+  const todayOrders = allOrders.filter(o=>new Date(o.created_at).toDateString()===today);
+  const revenue = todayOrders.reduce((s,o)=>s+(o.total||0),0);
+  const newOrders = allOrders.filter(o=>o.status==='neu');
+
+  document.getElementById('stat-today').textContent = todayOrders.length;
+  document.getElementById('stat-revenue').textContent = revenue.toFixed(2).replace('.',',')+' €';
+  document.getElementById('stat-total').textContent = allOrders.length;
+  document.getElementById('stat-new').textContent = newOrders.length;
+}
+
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function renderOrders(){
+  document.getElementById('loading-msg').classList.add('hidden');
+  let orders = allOrders;
+  if(currentFilter==='neu') orders=orders.filter(o=>o.status==='neu');
+  else if(currentFilter==='bestaetigt') orders=orders.filter(o=>o.status==='bestaetigt');
+  else if(currentFilter==='geliefert') orders=orders.filter(o=>o.status==='geliefert');
+  else if(currentFilter==='lieferung') orders=orders.filter(o=>o.order_type==='lieferung');
+  else if(currentFilter==='abholung') orders=orders.filter(o=>o.order_type==='abholung');
+
+  if(!orders.length){
+    document.getElementById('empty-msg').classList.remove('hidden');
+    document.getElementById('orders-table').classList.add('hidden');
+    return;
+  }
+
+  document.getElementById('empty-msg').classList.add('hidden');
+  document.getElementById('orders-table').classList.remove('hidden');
+
+  const tbody = document.getElementById('orders-body');
+  tbody.innerHTML = orders.map(o=>{
+    const d=new Date(o.created_at);
+    const time=d.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'})+' · '+d.toLocaleDateString('de-AT');
+    const itemCount=(o.items||[]).reduce((s,i)=>s+i.qty,0);
+    return`<tr onclick="showDetail('${o.order_id}')">
+      <td class="order-id-cell">${o.order_id}</td>
+      <td>${time}</td>
+      <td>${o.customer_name}<br><span style="font-size:12px;color:#666">${o.customer_phone||''}</span></td>
+      <td><span class="type-badge">${o.order_type==='lieferung'?'🚚 Lieferung':'🏪 Abholung'}</span></td>
+      <td>${itemCount} Artikel</td>
+      <td style="font-weight:500">${(o.total||0).toFixed(2).replace('.',',')} €</td>
+      <td><span class="status-badge status-${o.status||'neu'}">${statusLabel(o.status)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function statusLabel(s){
+  return{neu:'🟡 Neu',bestaetigt:'✅ Bestätigt',geliefert:'📦 Geliefert',storniert:'❌ Storniert'}[s]||s;
+}
+
+function showDetail(order_id){
+  const o = allOrders.find(o=>o.order_id===order_id);
+  if(!o) return;
+  selectedOrderId=order_id;
+
+  const d=new Date(o.created_at);
+  const timeStr=d.toLocaleString('de-AT');
+
+  const adresse = o.adresse
+    ? `${o.adresse.strasse}, ${o.adresse.plz} ${o.adresse.ort}`
+    : '–';
+
+  const itemRows = (o.items||[]).map(i=>
+    `<tr><td>${i.name}</td><td>×${i.qty}</td><td style="text-align:right">${(i.subtotal||0).toFixed(2).replace('.',',')} €</td></tr>`
+  ).join('');
+
+  document.getElementById('detail-content').innerHTML=`
+    <h3 style="font-size:15px;margin-bottom:16px">Bestellung ${o.order_id} · ${timeStr}</h3>
+    <div class="detail-grid">
+      <div class="detail-group">
+        <h4>Kunde</h4>
+        <p>${o.customer_name}<br>${o.customer_email}<br>${o.customer_phone||'–'}</p>
+      </div>
+      <div class="detail-group">
+        <h4>Lieferart & Adresse</h4>
+        <p>${o.order_type==='lieferung'?'🚚 Lieferung':'🏪 Abholung'}<br>${adresse}</p>
+      </div>
+      <div class="detail-group">
+        <h4>Zahlung & Notiz</h4>
+        <p>${o.zahlung||'Bar'}<br><span style="color:#888;font-size:12px">${o.note||'Keine Anmerkung'}</span></p>
+      </div>
+    </div>
+    <table class="items-table">
+      ${itemRows}
+      <tr class="total-row"><td colspan="2">Lieferkosten</td><td style="text-align:right">${(o.lieferkosten||0).toFixed(2).replace('.',',')} €</td></tr>
+      <tr class="total-row"><td colspan="2"><strong>Gesamt</strong></td><td style="text-align:right"><strong>${(o.total||0).toFixed(2).replace('.',',')} €</strong></td></tr>
+    </table>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      <span style="font-size:13px;color:#888">Status ändern:</span>
+      <select class="status-select" id="status-select">
+        <option value="neu"${o.status==='neu'?' selected':''}>Neu</option>
+        <option value="bestaetigt"${o.status==='bestaetigt'?' selected':''}>Bestätigt</option>
+        <option value="geliefert"${o.status==='geliefert'?' selected':''}>Geliefert</option>
+        <option value="storniert"${o.status==='storniert'?' selected':''}>Storniert</option>
+      </select>
+      <button class="update-btn" onclick="updateStatus('${o.order_id}')">Speichern</button>
+    </div>`;
+
+  const panel=document.getElementById('detail-panel');
+  panel.classList.add('open');
+  panel.scrollIntoView({behavior:'smooth'});
+}
+
+function closeDetail(){
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+async function updateStatus(order_id){
+  const status=document.getElementById('status-select').value;
+  try{
+    const res=await fetch(`/api/orders?id=${order_id}&status=${status}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-secret':adminSecret},
+      body:JSON.stringify({update:true,order_id,status})
+    });
+    const idx=allOrders.findIndex(o=>o.order_id===order_id);
+    if(idx>=0) allOrders[idx].status=status;
+    updateStats();
+    renderOrders();
+    closeDetail();
+  }catch(e){
+    alert('Fehler beim Aktualisieren');
+  }
+}
+
+// Auto-refresh alle 60 Sekunden
+setInterval(()=>{ if(adminSecret) loadOrders(); },60000);
+</script>
+</body>
+</html>
