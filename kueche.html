@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizza Express – Küchendisplay</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;--surface:#161616;--border:#252525;
+  --red:#e63946;--gold:#f4a261;--green:#2ecc71;--blue:#4dabf7;
+  --text:#f0ece6;--muted:#666;--dim:#333;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column}
+
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;flex-direction:column;gap:16px}
+.login-screen h2{font-size:22px;font-weight:500}
+.login-screen p{font-size:14px;color:var(--muted);text-align:center}
+.login-screen input{background:#1a1a1a;border:1px solid var(--border);color:var(--text);padding:12px 16px;border-radius:8px;font-size:15px;font-family:'DM Sans',sans-serif;width:300px;outline:none;text-align:center}
+.login-screen input:focus{border-color:var(--red)}
+.login-screen button{background:var(--red);border:none;color:#fff;padding:12px 32px;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;width:300px}
+.login-err{color:var(--red);font-size:13px;display:none}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.logo{font-size:18px;font-weight:700;color:var(--text)}
+.logo span{color:var(--red)}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.5)}50%{box-shadow:0 0 0 6px rgba(46,204,113,0)}}
+.live-label{font-size:12px;color:var(--green);font-weight:500;letter-spacing:.5px}
+.topbar-right{display:flex;align-items:center;gap:20px}
+.stat{text-align:center}
+.stat-num{font-size:20px;font-weight:700;line-height:1}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.stat.red .stat-num{color:var(--red)}
+.stat.gold .stat-num{color:var(--gold)}
+.stat.green .stat-num{color:var(--green)}
+.clock{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--text)}
+
+/* COLUMNS */
+.columns{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;overflow:hidden}
+.column{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+.column:last-child{border-right:none}
+.col-header{padding:12px 16px;border-bottom:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.col-title{font-size:13px;font-weight:500;text-transform:uppercase;letter-spacing:1px}
+.col-count{font-size:12px;background:var(--dim);padding:2px 8px;border-radius:10px;color:var(--muted)}
+.col-new .col-title{color:var(--gold)}
+.col-new .col-header{border-bottom-color:rgba(244,162,97,.2)}
+.col-wip .col-title{color:var(--blue)}
+.col-wip .col-header{border-bottom-color:rgba(77,171,247,.2)}
+.col-done .col-title{color:var(--green)}
+.col-done .col-header{border-bottom-color:rgba(46,204,113,.2)}
+.col-body{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px}
+.col-body::-webkit-scrollbar{width:4px}
+.col-body::-webkit-scrollbar-track{background:transparent}
+.col-body::-webkit-scrollbar-thumb{background:var(--dim);border-radius:2px}
+
+/* ORDER CARD */
+.order-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:.2s;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.order-card:hover{border-color:var(--dim)}
+.order-card.new-order{border-color:var(--gold);animation:newPulse 1s ease-in-out 3}
+@keyframes newPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 16px rgba(244,162,97,.4)}}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.card-id{font-size:12px;font-weight:700;color:var(--red);font-family:monospace}
+.card-time{font-size:11px;color:var(--muted)}
+.card-type{font-size:11px;padding:3px 8px;border-radius:4px;font-weight:500}
+.type-lieferung{background:rgba(77,171,247,.12);color:var(--blue)}
+.type-abholung{background:rgba(46,204,113,.12);color:var(--green)}
+.card-customer{font-size:13px;font-weight:500;margin-bottom:4px}
+.card-phone{font-size:12px;color:var(--muted);margin-bottom:10px}
+.card-items{border-top:1px solid var(--border);padding-top:8px}
+.card-item{display:flex;gap:6px;font-size:13px;padding:3px 0;color:#ccc}
+.item-qty{font-weight:700;color:var(--text);min-width:20px}
+.item-name{flex:1}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px solid var(--border)}
+.card-total{font-size:14px;font-weight:700;color:var(--gold)}
+.card-addr{font-size:11px;color:var(--muted);margin-top:4px}
+.card-actions{display:flex;gap:6px}
+.action-btn{border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.2s}
+.btn-start{background:rgba(77,171,247,.15);color:var(--blue)}
+.btn-start:hover{background:rgba(77,171,247,.3)}
+.btn-done{background:rgba(46,204,113,.15);color:var(--green)}
+.btn-done:hover{background:rgba(46,204,113,.3)}
+.btn-back{background:var(--dim);color:var(--muted);font-size:11px}
+.empty-col{text-align:center;padding:32px 16px;color:var(--dim);font-size:14px}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:.3}
+
+/* NEW ORDER ALERT */
+.alert-banner{position:fixed;top:0;left:0;right:0;background:var(--gold);color:#000;text-align:center;padding:10px;font-weight:700;font-size:16px;z-index:500;transform:translateY(-100%);transition:.3s}
+.alert-banner.show{transform:translateY(0)}
+
+/* SOUND indicator */
+.sound-toggle{background:none;border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif}
+.sound-toggle.on{border-color:var(--green);color:var(--green)}
+</style>
+</head>
+<body>
+
+<div class="login-screen" id="login-screen">
+  <div style="font-size:40px">🍕</div>
+  <h2>Küchendisplay</h2>
+  <p>Bitte Supabase-Zugangsdaten eingeben.<br>Diese findest du in deinem Supabase-Projekt unter Settings → API.</p>
+  <input type="text" id="sb-url" placeholder="Supabase URL (https://xxx.supabase.co)">
+  <input type="password" id="sb-key" placeholder="anon public key">
+  <button onclick="connect()">Verbinden</button>
+  <p class="login-err" id="login-err">Verbindung fehlgeschlagen – URL oder Key prüfen</p>
+  <p style="font-size:12px;color:var(--muted);max-width:300px;margin-top:8px">
+    Tipp: Um die Eingabe zu überspringen, trage die Werte direkt in den HTML-Code ein (Zeile SUPABASE_URL / SUPABASE_ANON_KEY).
+  </p>
+</div>
+
+<div class="alert-banner" id="alert-banner">🔔 Neue Bestellung eingegangen!</div>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo">Pizza <span>Express</span></div>
+    <div class="live-dot"></div>
+    <div class="live-label">LIVE</div>
+  </div>
+  <div class="topbar-right">
+    <div class="stat red"><div class="stat-num" id="stat-new">0</div><div class="stat-lbl">Neu</div></div>
+    <div class="stat" style="width:1px;background:var(--border);height:30px"></div>
+    <div class="stat" style="color:var(--blue)"><div class="stat-num" id="stat-wip">0</div><div class="stat-lbl">In Arbeit</div></div>
+    <div class="stat" style="width:1px;background:var(--border);height:30px"></div>
+    <div class="stat green"><div class="stat-num" id="stat-done">0</div><div class="stat-lbl">Fertig heute</div></div>
+    <div class="stat" style="width:1px;background:var(--border);height:30px"></div>
+    <div class="stat gold"><div class="stat-num" id="stat-revenue">0 €</div><div class="stat-lbl">Umsatz</div></div>
+    <div style="width:1px;background:var(--border);height:30px"></div>
+    <button class="sound-toggle on" id="sound-toggle" onclick="toggleSound()">🔔 Ton</button>
+    <div class="clock" id="clock">00:00</div>
+  </div>
+</div>
+
+<div class="columns">
+  <div class="column col-new">
+    <div class="col-header">
+      <span class="col-title">🟡 Neu</span>
+      <span class="col-count" id="count-new">0</span>
+    </div>
+    <div class="col-body" id="col-neu"></div>
+  </div>
+  <div class="column col-wip">
+    <div class="col-header">
+      <span class="col-title">🔵 In Arbeit</span>
+      <span class="col-count" id="count-wip">0</span>
+    </div>
+    <div class="col-body" id="col-wip"></div>
+  </div>
+  <div class="column col-done">
+    <div class="col-header">
+      <span class="col-title">✅ Fertig</span>
+      <span class="col-count" id="count-done">0</span>
+    </div>
+    <div class="col-body" id="col-done"></div>
+  </div>
+</div>
+
+<script>
+// ── Wenn du die Werte fest eintragen willst, hier ausfüllen: ──────────────
+const HARDCODED_URL = '';   // z.B. 'https://abc.supabase.co'
+const HARDCODED_KEY = '';   // anon public key
+// ─────────────────────────────────────────────────────────────────────────
+
+let supabase_client = null;
+let orders = {};
+let soundEnabled = true;
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function beep(){
+  if(!soundEnabled) return;
+  try{
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    o.connect(g); g.connect(audioCtx.destination);
+    o.type='sine'; o.frequency.value=880;
+    g.gain.setValueAtTime(.3,audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.5);
+    o.start(audioCtx.currentTime); o.stop(audioCtx.currentTime+.5);
+    setTimeout(()=>{
+      const o2=audioCtx.createOscillator();
+      const g2=audioCtx.createGain();
+      o2.connect(g2); g2.connect(audioCtx.destination);
+      o2.type='sine'; o2.frequency.value=1100;
+      g2.gain.setValueAtTime(.2,audioCtx.currentTime);
+      g2.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+.4);
+      o2.start(audioCtx.currentTime); o2.stop(audioCtx.currentTime+.4);
+    },200);
+  }catch(e){}
+}
+
+function toggleSound(){
+  soundEnabled=!soundEnabled;
+  const btn=document.getElementById('sound-toggle');
+  btn.textContent=soundEnabled?'🔔 Ton':'🔕 Stumm';
+  btn.classList.toggle('on',soundEnabled);
+}
+
+async function connect(){
+  const url=(document.getElementById('sb-url').value||HARDCODED_URL).trim();
+  const key=(document.getElementById('sb-key').value||HARDCODED_KEY).trim();
+  if(!url||!key){ document.getElementById('login-err').style.display='block'; return; }
+
+  try{
+    supabase_client = supabase.createClient(url, key);
+    const {data,error}=await supabase_client.from('orders').select('count',{count:'exact',head:true});
+    if(error) throw error;
+    document.getElementById('login-screen').style.display='none';
+    init();
+  }catch(e){
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('login-err').textContent='Verbindung fehlgeschlagen: '+e.message;
+  }
+}
+
+async function init(){
+  await loadOrders();
+  subscribeRealtime();
+  setInterval(updateClock, 1000);
+  updateClock();
+}
+
+async function loadOrders(){
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  const {data,error}=await supabase_client
+    .from('orders')
+    .select('*')
+    .gte('created_at',today.toISOString())
+    .in('status',['neu','in_arbeit','fertig'])
+    .order('created_at',{ascending:false});
+  if(error){ console.error(error); return; }
+  orders={};
+  (data||[]).forEach(o=>orders[o.order_id]=o);
+  render();
+}
+
+function subscribeRealtime(){
+  supabase_client
+    .channel('orders-channel')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},payload=>{
+      const o=payload.new;
+      orders[o.order_id]=o;
+      showAlert();
+      beep();
+      render();
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'orders'},payload=>{
+      const o=payload.new;
+      orders[o.order_id]=o;
+      render();
+    })
+    .subscribe();
+}
+
+function showAlert(){
+  const el=document.getElementById('alert-banner');
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+function render(){
+  const neu=[], wip=[], done=[];
+  let revenue=0;
+  Object.values(orders).forEach(o=>{
+    if(o.status==='neu') neu.push(o);
+    else if(o.status==='in_arbeit') wip.push(o);
+    else if(o.status==='fertig'||o.status==='geliefert') done.push(o);
+    if(o.status!=='storniert') revenue+=parseFloat(o.total||0);
+  });
+  neu.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+  wip.sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  done.sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+
+  document.getElementById('stat-new').textContent=neu.length;
+  document.getElementById('stat-wip').textContent=wip.length;
+  document.getElementById('stat-done').textContent=done.length;
+  document.getElementById('stat-revenue').textContent=revenue.toFixed(0)+' €';
+  document.getElementById('count-new').textContent=neu.length;
+  document.getElementById('count-wip').textContent=wip.length;
+  document.getElementById('count-done').textContent=done.length;
+
+  document.getElementById('col-neu').innerHTML=neu.length?neu.map(o=>cardHTML(o,'neu')).join(''):emptyHTML();
+  document.getElementById('col-wip').innerHTML=wip.length?wip.map(o=>cardHTML(o,'wip')).join(''):emptyHTML();
+  document.getElementById('col-done').innerHTML=done.length?done.map(o=>cardHTML(o,'done')).join(''):emptyHTML();
+}
+
+function cardHTML(o, col){
+  const d=new Date(o.created_at);
+  const time=d.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit'});
+  const items=(o.items||[]).map(i=>`
+    <div class="card-item">
+      <span class="item-qty">${i.qty}×</span>
+      <span class="item-name">${i.name}</span>
+    </div>`).join('');
+  const addrStr=o.adresse?`📍 ${o.adresse.strasse}, ${o.adresse.plz}`:'';
+  const actions = col==='neu'
+    ? `<button class="action-btn btn-start" onclick="moveOrder('${o.order_id}','in_arbeit',event)">▶ In Arbeit</button>`
+    : col==='wip'
+    ? `<button class="action-btn btn-back" onclick="moveOrder('${o.order_id}','neu',event)">← Zurück</button>
+       <button class="action-btn btn-done" onclick="moveOrder('${o.order_id}','fertig',event)">✓ Fertig</button>`
+    : `<button class="action-btn btn-back" onclick="moveOrder('${o.order_id}','in_arbeit',event)">← Zurück</button>`;
+
+  const isNew=col==='neu'&&(Date.now()-new Date(o.created_at).getTime())<30000;
+  return`<div class="order-card${isNew?' new-order':''}">
+    <div class="card-top">
+      <span class="card-id">${o.order_id}</span>
+      <span class="card-time">${time}</span>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div>
+        <div class="card-customer">${o.customer_name}</div>
+        <div class="card-phone">${o.customer_phone||''}</div>
+      </div>
+      <span class="card-type type-${o.order_type}">${o.order_type==='lieferung'?'🚚 Lieferung':'🏪 Abholung'}</span>
+    </div>
+    <div class="card-items">${items}</div>
+    ${addrStr?`<div class="card-addr">${addrStr}</div>`:''}
+    ${o.note?`<div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic">💬 ${o.note}</div>`:''}
+    <div class="card-footer">
+      <span class="card-total">${parseFloat(o.total||0).toFixed(2).replace('.',',')} €</span>
+      <div class="card-actions">${actions}</div>
+    </div>
+  </div>`;
+}
+
+function emptyHTML(){
+  return`<div class="empty-col"><div class="empty-icon">—</div>Keine Bestellungen</div>`;
+}
+
+async function moveOrder(order_id, newStatus, event){
+  event.stopPropagation();
+  const {error}=await supabase_client.from('orders').update({status:newStatus}).eq('order_id',order_id);
+  if(!error){ orders[order_id].status=newStatus; render(); }
+}
+
+function updateClock(){
+  const now=new Date();
+  document.getElementById('clock').textContent=
+    now.toLocaleTimeString('de-AT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+// Auto-connect wenn Werte hardcodiert
+if(HARDCODED_URL && HARDCODED_KEY){
+  document.getElementById('login-screen').style.display='none';
+  supabase_client=supabase.createClient(HARDCODED_URL, HARDCODED_KEY);
+  init();
+}
+</script>
+</body>
+</html>
