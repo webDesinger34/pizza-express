@@ -3,6 +3,7 @@
     { "source": "/api/orders", "destination": "/api/orders.js" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/kueche", "destination": "/kueche.html" },
+    { "source": "/kontakt", "destination": "/kontakt.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
